@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">LocalTransfer</string>
+    <string name="http_index">index.html</string>
+</resources>
