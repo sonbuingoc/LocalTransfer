@@ -34,12 +34,15 @@ public class MainActivity extends AppCompatActivity {
     ImageView imageView;
     public static final String ipaddress = "192.168.1.18";
 
+    MyWebserver myWebserver;
     @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        AppDatabase.getInstance(this).dao().Delete();
+        MyDatabase.dao().Delete();
         imageView = findViewById(R.id.image);
         welcomeMsg = (EditText) findViewById(R.id.welcomemsg);
         infoIp = (TextView) findViewById(R.id.infoip);
@@ -54,7 +57,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         infoIp.setText("SiteLocalAddress: " + getIpAddress() + ":" + "8080" + "\n");
-        MyWebserver myWebserver = new MyWebserver(8080, this, new MyWebserver.fileCallback() {
+
+        myWebserver = new MyWebserver(8080, this, new MyWebserver.fileCallback() {
             @Override
             public void file(String imageFileName, String imagePath) {
                 runOnUiThread(new Runnable() {
@@ -72,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
         });
         try {
             myWebserver.start();
+            System.out.println("ngocson start: "+myWebserver.isAlive());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -80,7 +85,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
+        if (myWebserver != null){
+            myWebserver.stop();
+            System.out.println("ngocson stop: "+myWebserver.isAlive());
+        }
     }
 
     @Override
